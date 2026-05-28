@@ -72,6 +72,55 @@ python src/block_length.py
 ```
 The script will calculate the refractive index of air, the corrected wavelength, and the final length of the block at the standard 20°C.
 
+## Use Case: Calibrating a 2.5 mm Gauge Block
+
+Suppose you are calibrating a **2.5 mm** nominal gauge block using the provided simulated image.
+
+### 1. Setup Environmental Parameters
+In `scripts/calibrar_bloque.py`, the following conditions are defined based on laboratory sensors:
+*   **Vacuum Wavelength ($\lambda_0$)**: 0.63299141 µm (He-Ne Laser)
+*   **Air Pressure**: 755.0 mm Hg
+*   **Block Temperature**: 20.15 °C
+
+### 2. Execute Measurement
+The script `calibrar_bloque.py` processes `block_2.5_mm(simulated).png` using the selected ROIs. The fitting algorithm extracts the phase shift between the reference surface (platina) and the gauge block surface.
+
+### 3. Final Results
+The output provides the absolute length corrected to the standard 20°C:
+*   **Measured Fraction**: `0.3910`
+*   **Calculated Absolute Length ($L_{20}$)**: `2.50000173 mm`
+*   **Deviation from Nominal**: `+1.73 nm`
+
+### Quick example
+```bash
+from src.utils import load_image
+from src.fringe_fraction_measurement import FringeFractionMeasurement
+from src.block_length import GaugeBlockLength
+
+
+img = load_image("block_2.5_mm(simulated).png")
+coords_platina = (700, 1900, 500, 900)
+coords_bloque  = (700, 1900, 1000, 1400)
+medicion = FringeFractionMeasurement(img, coords_platina, coords_bloque)
+medicion.fit()
+medicion.calculate_fraction()
+fraction = medicion.fraccion_fase
+
+bloque = GaugeBlockLength(
+        lambda_0=0.63299141, # um
+        p=755.0,             # mm Hg
+        f=10.0,              # mm Hg
+        Lp=2.5,             # mm
+        C=11.5e-6,           # exp. acero
+        t_block=20.15,       # °C
+        obs_fraction=fraction    # Fracción leída
+        )
+bloque_length = bloque.block_length()
+print(f"Longitud Final a 20°C (L_20) : {bloque_length:.8f} mm")
+```
+
+This demonstrates how the tool converts visual interference patterns into high-precision dimensional measurements.
+
 ## Mathematical Background
 
 This project implements several metrological standards:
