@@ -1,0 +1,20 @@
+# Entornos virtuales de Python
+.venv/
+
+# Archivos compilados y caché de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos autogenerados por Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Datos (Evitar subir datasets pesados a GitHub)
+# Esto ignora los archivos dentro, pero te permite mantener la estructura de carpetas si añades un archivo vacío llamado '.gitkeep' en cada una.
+data/01_raw/*
+data/02_interim/*
+data/03_processed/*
+!data/**/.gitkeep
+
+# Configuraciones locales del editor
+.vscode/
