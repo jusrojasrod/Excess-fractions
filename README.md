@@ -92,7 +92,7 @@ The output provides the absolute length corrected to the standard 20°C:
 *   **Deviation from Nominal**: `+1.73 nm`
 
 ### Quick example
-```bash
+```python
 from src.utils import load_image
 from src.fringe_fraction_measurement import FringeFractionMeasurement
 from src.block_length import GaugeBlockLength
