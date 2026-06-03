@@ -1,20 +1,46 @@
-# Entornos virtuales de Python
+# ==========================================
+# Entornos virtuales y variables de entorno
+# ==========================================
 .venv/
+venv/
+env/
+.env
 
+# ==========================================
 # Archivos compilados y caché de Python
+# ==========================================
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
-# Archivos autogenerados por Jupyter Notebooks
+# ==========================================
+# Jupyter Notebooks y Herramientas
+# ==========================================
 .ipynb_checkpoints/
+profile_default/
+ipython_config.py
 
-# Datos (Evitar subir datasets pesados a GitHub)
-# Esto ignora los archivos dentro, pero te permite mantener la estructura de carpetas si añades un archivo vacío llamado '.gitkeep' en cada una.
+# ==========================================
+# Datos y Resultados
+# ==========================================
+# Ignorar el contenido de datos pero mantener estructura
 data/01_raw/*
 data/02_interim/*
 data/03_processed/*
 !data/**/.gitkeep
 
-# Configuraciones locales del editor
+# Evitar subir gráficas o exportaciones de alta resolución por accidente
+*.png
+*.pdf
+*.svg
+*.eps
+
+# ==========================================
+# Configuraciones locales de editores y SO
+# ==========================================
 .vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
