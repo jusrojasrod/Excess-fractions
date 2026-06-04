@@ -49,14 +49,10 @@ class MonochromaticEFMSolver:
             )
 
         fractional_prime, _ = np.modf((2 * nominal_length) / self.wavelength)
-
         lower_bound = delta_nominal_length - uncertainty
         upper_bound = delta_nominal_length + uncertainty
-
         m_j_values = np.arange(-5, 6)
-
         c_values = self.lambda_over_2 * (m_j_values + measured_fraction - fractional_prime)
-
         valid_c = [c for c in c_values if lower_bound <= c <= upper_bound]
 
         if len(valid_c) == 0:
@@ -65,7 +61,6 @@ class MonochromaticEFMSolver:
             raise RuntimeError(f"Residual ambiguity: Multiple valid values found: {valid_c}")
 
         c_accepted = valid_c[0]
-
         real_length = nominal_length + c_accepted
 
         return {
