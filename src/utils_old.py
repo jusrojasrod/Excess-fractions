@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import cv2
 from pathlib import Path
 
+
 def interference_model(x, A, w, phi, C): return A * np.sin(w * x + phi) + C
 
 def evaluate_fit(x, data_profile, fit_params, pcov, name="Data"):
