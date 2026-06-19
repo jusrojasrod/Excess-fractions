@@ -1,4 +1,4 @@
-from src.utils import load_image
+from src.helpers.data_loader import load_image
 from src.fringe_fraction_measurement import FringeFractionMeasurement
 from src.block_length import GaugeBlockLength
 
