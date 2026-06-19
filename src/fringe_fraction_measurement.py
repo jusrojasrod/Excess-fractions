@@ -2,7 +2,9 @@ import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 
-from src.utils import interference_model, evaluate_fit, load_image
+from src.utils.math_utils import interference_model, calculate_fit_metrics
+from src.helpers.report import quality_fit_report
+
 
 class FringeFractionMeasurement:
     def __init__(self, image: np.ndarray, roi_platina: tuple, roi_bloque: tuple):
@@ -45,8 +47,12 @@ class FringeFractionMeasurement:
             interference_model, self.pixel_indices, self.perfil_platina, 
             p0=p0_platina, maxfev=max_iterations
         )
-        evaluate_fit(self.pixel_indices, self.perfil_platina, self.params_platina, cov_platina, "Platina")
-
+        metrics_platina = calculate_fit_metrics(x=self.pixel_indices, 
+                                        data_profile=self.perfil_platina, 
+                                        fit_params=self.params_platina, 
+                                        pcov=cov_platina)
+        quality_fit_report(metrics=metrics_platina, name = "Platina")
+        
         # Block fit
         _, w_ref, _, _ = self.params_platina
         p0_bloque = self._initial_parameter_guess(self.perfil_bloque,pixeles_between_fringes)
@@ -56,7 +62,12 @@ class FringeFractionMeasurement:
             interference_model, self.pixel_indices, self.perfil_bloque, 
             p0=p0_bloque, maxfev=max_iterations
         )
-        evaluate_fit(self.pixel_indices, self.perfil_bloque, self.params_bloque, cov_bloque, "Bloque")
+        metrics_blocks = calculate_fit_metrics(x=self.pixel_indices, 
+                                        data_profile=self.perfil_bloque, 
+                                        fit_params=self.params_bloque, 
+                                        pcov=cov_bloque)
+        quality_fit_report(metrics=metrics_blocks, name = "Bloque")
+        
         
     def calculate_fraction(self) -> float:
         if self.params_platina is None or self.params_bloque is None:
@@ -96,7 +107,9 @@ class FringeFractionMeasurement:
         plt.show()
     
 if __name__ == "__main__":
-    img_label = "block_2.5_mm(simulated).png"
+    from src.helpers.data_loader import load_image
+    
+    img_label = "block_100.0001582_mm(simulated).png"
     img = load_image(img_label)
 
     roi_platina = (700, 1900, 500, 900)  # (yp1, yp2, xp1, xp2)
