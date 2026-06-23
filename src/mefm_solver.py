@@ -56,6 +56,8 @@ class MonochromaticEFMSolver:
         valid_c = [c for c in c_values if lower_bound <= c <= upper_bound]
 
         if len(valid_c) == 0:
+            # print(f"c_difference_nm: {c_values} - Bounds ({lower_bound}, {upper_bound})" )
+            # return 0
             raise RuntimeError("Convergence failure: No optical value matches the mechanical measurement.")
         elif len(valid_c) > 1:
             raise RuntimeError(f"Residual ambiguity: Multiple valid values found: {valid_c}")
