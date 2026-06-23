@@ -58,7 +58,14 @@ class MonochromaticEFMSolver:
         if len(valid_c) == 0:
             # print(f"c_difference_nm: {c_values} - Bounds ({lower_bound}, {upper_bound})" )
             # return 0
-            raise RuntimeError("Convergence failure: No optical value matches the mechanical measurement.")
+            closest_c, min_error = self._run_diagnostics(c_values, delta_nominal_length)
+            missed_by = min_error - uncertainty
+            raise RuntimeError(
+                f"Convergence failure: No optical value matches the mechanical measurement. "
+                f"Closest c_value is {closest_c:.2f} nm. "
+                f"Allowed bounds: ({lower_bound:.2f}, {upper_bound:.2f}). "
+                f"Tolerance missed by {missed_by:.2f} nm."
+            )
         elif len(valid_c) > 1:
             raise RuntimeError(f"Residual ambiguity: Multiple valid values found: {valid_c}")
 
@@ -71,6 +78,31 @@ class MonochromaticEFMSolver:
             "fractional_prime": fractional_prime,
             "acceptance_interval": (lower_bound, upper_bound)
         }
+        
+    def _run_diagnostics(self, c_values: np.ndarray, delta_nominal_length: float) -> tuple:
+        """
+        Analyzes the deviation between the calculated optical differences 
+        and the mechanical deviation when convergence fails.
+        
+        Parameters
+        ----------
+        c_values: np.ndarray
+            Array of calculated optical length differences in nm.
+        delta_nominal_length: float
+            Mechanical deviation in nm.
+            
+        Returns
+        -------
+        tuple
+            Closest optical difference and the minimum absolute error in nm.
+        """
+        differences = np.abs(c_values - delta_nominal_length)
+        min_index = np.argmin(differences)
+        
+        closest_c = c_values[min_index]
+        min_error = differences[min_index]
+        
+        return closest_c, min_error
 
 
 if __name__ == "__main__":
