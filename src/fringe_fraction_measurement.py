@@ -109,7 +109,7 @@ class FringeFractionMeasurement:
 if __name__ == "__main__":
     from src.helpers.data_loader import load_image
     
-    img_label = "block_100.0001582_mm(simulated).png"
+    img_label = "block_100.0001582_mm-WL_632.9905846-(simulated).png"
     img = load_image(img_label)
 
     roi_platina = (700, 1900, 500, 900)  # (yp1, yp2, xp1, xp2)
@@ -120,6 +120,6 @@ if __name__ == "__main__":
     medicion.calculate_fraction()
     fraction = medicion.fraccion_fase
     print(f"Fracción de franja medida: {fraction:.4f}")
-    # medicion.plot()
+    # medicion.plot()   
     
     
