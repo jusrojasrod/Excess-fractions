@@ -36,6 +36,21 @@ class FringeFractionMeasurement:
         guess_w = 2 * np.pi / pixeles_between_fringes
         guess_phi = 0.0
         return [guess_A, guess_w, guess_phi, guess_C]
+
+    @staticmethod
+    def _normalize_sign(params):
+        """Normaliza el ajuste para que la amplitud A sea positiva.
+
+        curve_fit no restringe el signo de A. Como -sin(x) = sin(x + pi),
+        un ajuste con A<0 tiene su fase desplazada pi respecto a uno con A>0.
+        Sin esta normalizacion, si la platina y el bloque convergen a signos
+        opuestos de A, la fraccion sale corrida exactamente 0.5.
+        """
+        A, w, phi, C = params
+        if A < 0:
+            A = -A
+            phi = phi + np.pi
+        return np.array([A, w, phi % (2 * np.pi), C])
     
     def fit(self, pixeles_between_fringes: float = 175.0, max_iterations: int = 5000):
         if self.perfil_platina is None or self.perfil_bloque is None or self.pixel_indices is None:
@@ -44,10 +59,11 @@ class FringeFractionMeasurement:
         # Platina fit
         p0_platina = self._initial_parameter_guess(self.perfil_platina, pixeles_between_fringes)
         self.params_platina, cov_platina = curve_fit(
-            interference_model, self.pixel_indices, self.perfil_platina, 
+            interference_model, self.pixel_indices, self.perfil_platina,
             p0=p0_platina, maxfev=max_iterations
         )
-        metrics_platina = calculate_fit_metrics(x=self.pixel_indices, 
+        self.params_platina = self._normalize_sign(self.params_platina)
+        metrics_platina = calculate_fit_metrics(x=self.pixel_indices,
                                         data_profile=self.perfil_platina, 
                                         fit_params=self.params_platina, 
                                         pcov=cov_platina)
@@ -59,10 +75,11 @@ class FringeFractionMeasurement:
         p0_bloque[1] = w_ref # Forzamos la misma estimación de frecuencia
         
         self.params_bloque, cov_bloque = curve_fit(
-            interference_model, self.pixel_indices, self.perfil_bloque, 
+            interference_model, self.pixel_indices, self.perfil_bloque,
             p0=p0_bloque, maxfev=max_iterations
         )
-        metrics_blocks = calculate_fit_metrics(x=self.pixel_indices, 
+        self.params_bloque = self._normalize_sign(self.params_bloque)
+        metrics_blocks = calculate_fit_metrics(x=self.pixel_indices,
                                         data_profile=self.perfil_bloque, 
                                         fit_params=self.params_bloque, 
                                         pcov=cov_bloque)
@@ -109,7 +126,7 @@ class FringeFractionMeasurement:
 if __name__ == "__main__":
     from src.helpers.data_loader import load_image
     
-    img_label = "block_100.0_mm-WL_543.5-(simulated).png"
+    img_label = "block_9.999862_mm-WL_632.9905846-(simulated).png"
     img = load_image(img_label)
 
     roi_platina = (700, 1900, 500, 900)  # (yp1, yp2, xp1, xp2)
