@@ -126,7 +126,7 @@ class FringeFractionMeasurement:
 if __name__ == "__main__":
     from src.helpers.data_loader import load_image
     
-    img_label = "block_9.999862_mm-WL_632.9905846-(simulated).png"
+    img_label = "block_99.99990799999999_mm-WL_543.5-(simulated).png"
     img = load_image(img_label)
 
     roi_platina = (700, 1900, 500, 900)  # (yp1, yp2, xp1, xp2)
